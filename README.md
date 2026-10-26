@@ -9,4 +9,4 @@
 `reservations/{idempotencyKey}` · `slots/{fecha_servicio_hhmm}` (comensales reservados) · `audit/*` (cancelaciones).
 Crear/cancelar usan transacciones de Firestore: aforo y duplicados se validan de forma atómica.
 ## Pendiente
-Horarios/teléfono/dirección/carta reales (`src/config/restaurant.ts`; capacidad 20 es PROVISIONAL), antelación mín/máx y cierres, edición y creación manual en /admin, calendario, Resend, escenas/galería con fotos autorizadas, SEO, páginas legales, Playwright.
+Horarios/teléfono/dirección/carta reales (`src/config/restaurant.ts`; capacidad 20 y cierres vacíos son PROVISIONALES; la antelación 2 h / 60 días está aplicada con hora Europe/Madrid), edición y creación manual en /admin, calendario, Resend, escenas/galería con fotos autorizadas, SEO, páginas legales, Playwright.
