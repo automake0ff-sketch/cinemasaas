@@ -5,14 +5,14 @@ import { clientAuth } from "@/lib/firebase-client";
 type Item = { id: string; date: string; time: string; service: string; party: number; name: string; phone: string; status: string };
 export default function Admin() {
   const [items, setItems] = useState<Item[]>([]); const [msg, setMsg] = useState(""); const [date, setDate] = useState("");
-  const tok = () => clientAuth.currentUser!.getIdToken();
+  const tok = () => clientAuth().currentUser!.getIdToken();
   async function load() {
     const r = await fetch(`/api/admin/reservations?date=${date}`, { headers: { Authorization: `Bearer ${await tok()}` } });
     const j = await r.json(); r.ok ? setItems(j.items) : setMsg(j.error);
   }
   async function login(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault(); const f = new FormData(e.currentTarget);
-    try { await signInWithEmailAndPassword(clientAuth, String(f.get("email")), String(f.get("pw"))); setMsg(""); await load(); } catch { setMsg("Credenciales no válidas"); }
+    try { await signInWithEmailAndPassword(clientAuth(), String(f.get("email")), String(f.get("pw"))); setMsg(""); await load(); } catch { setMsg("Credenciales no válidas"); }
   }
   async function cancel(id: string) { await fetch(`/api/admin/reservations?id=${id}`, { method: "DELETE", headers: { Authorization: `Bearer ${await tok()}` } }); load(); }
   const inp = "rounded border border-humo/40 bg-noche px-3 py-2";
