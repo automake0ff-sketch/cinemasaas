@@ -1,4 +1,5 @@
 import HeroScene from "@/components/HeroScene";
+import Tour from "@/components/Tour";
 import ReservationForm from "@/components/ReservationForm";
 import { restaurant } from "@/config/restaurant";
 const steps = [["1","Elige fecha y hora","Consulta la disponibilidad."],["2","Selecciona comensales","Indica cuántos sois."],["3","Confirma tu reserva","Solo se confirma cuando el servidor lo valida."]];
@@ -20,7 +21,7 @@ export default function Home() {
         </div>
         <aside className="rounded-xl border border-oro/30 bg-noche/80 p-6"><h2 className="font-serif text-2xl">Reserva tu mesa</h2><p className="mb-4 text-sm text-humo">Fecha, servicio y comensales en un minuto.</p><a href="#reservas" className="block rounded-full bg-oro px-4 py-3 text-center font-semibold text-carbon">Buscar disponibilidad</a></aside>
       </section>
-      <section id="experiencia" className="mx-auto max-w-6xl px-6 py-16"><h2 className="font-serif text-3xl">Un viaje por el séptimo arte</h2><p className="mt-2 text-humo">[Pendiente: fotografías y texto verificados del restaurante]</p></section>
+      <section id="experiencia" className="mx-auto max-w-6xl px-6 py-16"><h2 className="font-serif text-3xl">Un viaje por el séptimo arte</h2><p className="mb-6 mt-2 text-humo">Recorre la sala en 3D.</p><Tour /></section>
       <section id="carta" className="mx-auto max-w-6xl px-6 py-16"><h2 className="font-serif text-3xl">Nuestra carta</h2><p className="mt-2 text-humo">{restaurant.menu.length ? "" : "[Pendiente: platos, precios y alérgenos verificados — sin datos de demostración inventados]"}</p></section>
       <section className="mx-auto max-w-6xl px-6 py-16"><h2 className="font-serif text-3xl">Reserva en 3 pasos</h2><ol className="mt-6 grid gap-6 md:grid-cols-3">{steps.map(([n,t,d]) => <li key={n} className="rounded-xl border border-oro/20 p-6"><span className="font-serif text-4xl text-oro">{n}</span><h3 className="mt-2">{t}</h3><p className="text-sm text-humo">{d}</p></li>)}</ol></section>
       <section id="reservas" className="mx-auto max-w-6xl px-6 py-16"><h2 className="mb-6 font-serif text-3xl">Reservar mesa</h2><ReservationForm /></section>
