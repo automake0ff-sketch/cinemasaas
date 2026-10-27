@@ -15,7 +15,9 @@ body{background:#0B0908;color:var(--fg);line-height:1.65}
 .btn-primary{background:var(--acc);color:var(--on-acc)}.btn-primary:hover{background:var(--fg);color:var(--bg,#0B0908)}
 .btn-ghost{border:1px solid var(--acc);color:var(--acc)}.btn-ghost:hover{background:var(--acc);color:var(--on-acc)}
 .chip{border:1px solid var(--line);transition:background .2s,color .2s}
-.chip[aria-pressed=true],.chip[aria-checked=true]{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.chip:has(input:checked),.chip[aria-pressed=true]{background:var(--acc);border-color:var(--acc);color:var(--on-acc)}
+.chip:has(input:focus-visible){outline:2px solid var(--acc);outline-offset:3px}
+.chip:has(input:disabled),.chip:disabled{opacity:.4;cursor:not-allowed}
 .link{background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .3s}.link:hover{background-size:100% 1px}
 .display{font-family:Didot,"Bodoni MT","Playfair Display",Georgia,serif}
 .sign{color:#E02B3A;letter-spacing:.04em;text-shadow:0 0 0 #000,0 2px 0 #7A1019}

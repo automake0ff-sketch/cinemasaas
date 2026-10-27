@@ -22,7 +22,7 @@ export default function Admin() {
       <form onSubmit={login} className="my-4 flex flex-wrap gap-2"><input name="email" type="email" aria-label="Correo" placeholder="correo" className={inp} /><input name="pw" type="password" aria-label="Contraseña" placeholder="contraseña" className={inp} /><button className="rounded bg-oro px-4 py-2 text-carbon">Entrar</button></form>
       <div className="mb-4 flex gap-2"><input type="date" aria-label="Fecha" value={date} onChange={e => setDate(e.target.value)} className={inp} /><button onClick={load} className="rounded border border-oro px-4 py-2">Filtrar</button></div>
       <p role="status" className="text-sm text-humo">{msg}</p>
-      <ul className="divide-y divide-humo/20">{items.map(i => <li key={i.id} className="flex items-center justify-between py-3"><span>{i.date} {i.time} · {i.service} · {i.party}p · {i.name} · {i.phone} · <b>{i.status}</b></span>{i.status !== "cancelled" && <button onClick={() => cancel(i.id)} className="text-sm text-oro underline">Cancelar</button>}</li>)}</ul>
+      <ul className="divide-y divide-humo/20">{items.map(i => <li key={i.id} className="flex items-center justify-between py-3"><span><code>{i.id.slice(0, 8).toUpperCase()}</code> · {i.date} {i.time} · {i.service} · {i.party}p · {i.name} · {i.phone} · <b>{i.status}</b></span>{i.status !== "cancelled" && <button onClick={() => cancel(i.id)} className="text-sm text-oro underline">Cancelar</button>}</li>)}</ul>
     </main>
   );
 }

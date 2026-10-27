@@ -1,3 +1,4 @@
+import { createHash } from "node:crypto";
 import { FieldValue } from "firebase-admin/firestore";
 import { db } from "./firebase-admin";
 import { hasRoom } from "./availability";
@@ -10,18 +11,23 @@ export async function bookedBySlot(date: string, service: string) {
 }
 // Transacción: comprueba aforo y escribe reserva + contador del turno de forma atómica.
 // La reserva usa idempotencyKey como ID: un reenvío no duplica.
+const fingerprint = (r: Omit<Reservation, "idempotencyKey">) => createHash("sha256").update(JSON.stringify([r.date, r.service, r.time, r.party, r.name, r.phone, r.email, r.notes ?? ""])).digest("hex");
 export async function createReservation(r: Reservation) {
   const d = db(); if (!d) throw new Error("NO_BACKEND");
   const { idempotencyKey, ...data } = r;
+  const fp = fingerprint(data);
   const resRef = d.collection("reservations").doc(idempotencyKey);
   const slotRef = d.collection("slots").doc(slotId(r.date, r.service, r.time));
   return d.runTransaction(async tx => {
     const [existing, slot] = await Promise.all([tx.get(resRef), tx.get(slotRef)]);
-    if (existing.exists) return { id: resRef.id, duplicate: true };
+    if (existing.exists) { // reenvío con la misma clave: solo es "duplicado" si los datos son idénticos
+      if (existing.data()!.fingerprint !== fp) throw new Error("KEY_CONFLICT");
+      return { id: resRef.id, duplicate: true };
+    }
     const booked = slot.exists ? (slot.data()!.booked as number) : 0;
     if (!hasRoom(booked, r.party)) throw new Error("FULL");
     tx.set(slotRef, { date: r.date, service: r.service, time: r.time, booked: booked + r.party });
-    tx.set(resRef, { ...data, status: "confirmed", createdAt: FieldValue.serverTimestamp() });
+    tx.set(resRef, { ...data, fingerprint: fp, status: "confirmed", createdAt: FieldValue.serverTimestamp() });
     return { id: resRef.id, duplicate: false };
   });
 }
