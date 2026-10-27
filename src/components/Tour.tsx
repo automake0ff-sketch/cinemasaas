@@ -1,5 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { stops } from "./tourStops";
 const TourScene = dynamic(() => import("./TourScene"), { ssr: false });
@@ -18,30 +19,29 @@ export default function Tour() {
     const t = setInterval(() => setI(n => (n + 1) % stops.length), 4500);
     return () => clearInterval(t);
   }, [auto]);
+  const go = (n: number) => { setAuto(false); setI((n + stops.length) % stops.length); };
   const s = stops[i];
   return (
-    <div className="grid gap-6 md:grid-cols-[1fr_320px]">
-      <div role="region" aria-roledescription="recorrido" aria-label="Recorrido 3D de la sala. Usa las flechas izquierda y derecha para cambiar de parada." tabIndex={0} onKeyDown={e => { if (e.key === "ArrowRight") { setAuto(false); setI(n => (n + 1) % stops.length); } if (e.key === "ArrowLeft") { setAuto(false); setI(n => (n + stops.length - 1) % stops.length); } }} className="relative aspect-[3/4] max-h-[78vh] w-full overflow-hidden border border-oro/30 bg-carbon">
+    <div className="grid gap-8 md:grid-cols-[minmax(0,1fr)_320px]">
+      <div role="region" aria-roledescription="recorrido" aria-label="Recorrido 3D de la sala. Usa las flechas izquierda y derecha para cambiar de parada." tabIndex={0}
+        onKeyDown={e => { if (e.key === "ArrowRight") go(i + 1); if (e.key === "ArrowLeft") go(i - 1); }}
+        className="relative aspect-[3/4] max-h-[78vh] w-full overflow-hidden border border-[color:var(--line)] bg-carbon">
         {gl
           ? <TourScene index={i} still={still} />
-          // eslint-disable-next-line @next/next/no-img-element
-          : <img src="/tour/sala.jpg" alt="Sala de Restaurante Cinema con arco de cortinas rojas, letrero CINEMA y pared naranja" className="h-full w-full object-cover" />}
-        <p className="pointer-events-none absolute bottom-3 left-3  bg-carbon/70 px-3 py-1 text-xs text-humo">{gl ? "Mueve el cursor o el dedo para mirar" : "Vista estática"}</p>
+          : <Image src="/tour/sala.jpg" alt="Sala de Restaurante Cinema con arco de cortinas rojas, letrero CINEMA y pared naranja" fill sizes="(min-width:768px) 60vw, 100vw" className="object-cover" />}
+        <p className="pointer-events-none absolute bottom-3 left-3 bg-carbon/80 px-3 py-1 text-xs text-marfil">{gl ? "Mueve el cursor o el dedo para mirar" : "Vista estática"}</p>
       </div>
       <aside>
-        <p className="text-xs uppercase tracking-[0.3em] text-humo">Parada {i + 1} / {stops.length}</p>
-        <h3 aria-live="polite" className="mt-2 font-serif text-3xl text-oro">{s.title}</h3>
-        <p className="mt-2 text-humo">{s.text}</p>
+        <p className="mut text-xs uppercase tracking-[0.3em]">Parada {i + 1} / {stops.length}</p>
+        <h3 aria-live="polite" className="display acc mt-2 text-3xl">{s.title}</h3>
+        <p className="mut mt-2">{s.text}</p>
         <div className="mt-6 flex flex-wrap gap-2">
-          {stops.map((p, n) => (
-            <button key={p.id} onClick={() => { setAuto(false); setI(n); }} aria-pressed={n === i}
-              className={` border px-3 py-1 text-sm ${n === i ? "border-oro bg-oro text-carbon" : "border-oro/40 text-marfil"}`}>{p.title}</button>
-          ))}
+          {stops.map((p, n) => <button key={p.id} onClick={() => go(n)} aria-pressed={n === i} className="chip min-h-11 px-3 py-1 text-sm">{p.title}</button>)}
         </div>
-        <div className="mt-6 flex gap-3">
-          <button onClick={() => { setAuto(false); setI((i + stops.length - 1) % stops.length); }} className=" border border-oro/40 px-4 py-2">←</button>
-          <button onClick={() => setAuto(a => !a)} className=" border border-oro px-4 py-2 text-oro">{auto ? "Pausar recorrido" : "Iniciar recorrido"}</button>
-          <button onClick={() => { setAuto(false); setI((i + 1) % stops.length); }} className=" border border-oro/40 px-4 py-2">→</button>
+        <div className="mt-6 flex flex-wrap gap-3">
+          <button aria-label="Parada anterior" onClick={() => go(i - 1)} className="btn btn-ghost">←</button>
+          <button onClick={() => setAuto(a => !a)} className="btn btn-primary">{auto ? "Pausar recorrido" : "Iniciar recorrido"}</button>
+          <button aria-label="Parada siguiente" onClick={() => go(i + 1)} className="btn btn-ghost">→</button>
         </div>
       </aside>
     </div>

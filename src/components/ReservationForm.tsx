@@ -5,8 +5,8 @@ import { restaurant } from "@/config/restaurant";
 type Service = "comida" | "cena";
 type Errors = Partial<Record<"date" | "party" | "time" | "name" | "phone" | "email", string>>;
 const today = () => new Date().toLocaleDateString("en-CA", { timeZone: restaurant.timezone });
-const field = "w-full border-0 border-b border-humo/50 bg-transparent px-0 py-3 text-marfil placeholder:text-humo/60 focus:border-oro focus:outline-none";
-const lbl = "block text-xs uppercase tracking-[0.2em] text-humo";
+const field = "w-full border-0 border-b border-[color:var(--line)] bg-transparent px-0 py-3 focus:border-[color:var(--acc)] focus:outline-none";
+const lbl = "mut block text-xs uppercase tracking-[0.2em]";
 
 export default function ReservationForm() {
   const [step, setStep] = useState(1);
@@ -49,26 +49,26 @@ export default function ReservationForm() {
     } catch { setNotice({ kind: "error", text: "No se pudo conectar. Tu reserva NO se ha realizado; inténtalo de nuevo." }); }
     setBusy(false);
   }
-  const err = (k: keyof Errors) => errors[k] && <p id={`e-${k}`} className="mt-1 text-sm text-[#F29A86]">{errors[k]}</p>;
+  const err = (k: keyof Errors) => errors[k] && <p id={`e-${k}`} className="mt-1 text-sm text-[color:var(--err)]">{errors[k]}</p>;
   const aria = (k: keyof Errors) => ({ "aria-invalid": !!errors[k], "aria-describedby": errors[k] ? `e-${k}` : undefined });
 
   if (done) return (
-    <div role="status" className="border border-oro/40 p-8">
-      <h3 ref={head} tabIndex={-1} className="font-serif text-3xl text-oro">Reserva confirmada</h3>
+    <div role="status" className="border border-[color:var(--acc)] p-8">
+      <h3 ref={head} tabIndex={-1} className="font-serif text-3xl acc">Reserva confirmada</h3>
       <p className="mt-3">{party} {party === 1 ? "persona" : "personas"} · {date} · {time} ({service}). A nombre de {data.name}.</p>
     </div>
   );
   return (
     <form onSubmit={submit} noValidate aria-busy={busy} className="max-w-xl">
       <ol className="mb-8 flex gap-6 text-xs uppercase tracking-[0.2em]" aria-label="Pasos de la reserva">
-        {["Fecha", "Hora", "Tus datos"].map((t, i) => <li key={t} aria-current={step === i + 1 ? "step" : undefined} className={step === i + 1 ? "text-oro" : "text-humo/60"}>{i + 1}. {t}</li>)}
+        {["Fecha", "Hora", "Tus datos"].map((t, i) => <li key={t} aria-current={step === i + 1 ? "step" : undefined} className={step === i + 1 ? "acc" : "mut opacity-70"}>{i + 1}. {t}</li>)}
       </ol>
       {step === 1 && (
         <div className="grid gap-6">
           <h3 ref={head} tabIndex={-1} className="font-serif text-2xl">¿Cuándo venís?</h3>
           <div><label htmlFor="date" className={lbl}>Fecha</label><input id="date" type="date" min={today()} value={date} onChange={e => setDate(e.target.value)} className={field} {...aria("date")} />{err("date")}</div>
           <fieldset><legend className={lbl}>Servicio</legend>
-            <div className="mt-2 flex gap-3">{(["comida", "cena"] as const).map(s => <button type="button" key={s} aria-pressed={service === s} onClick={() => setService(s)} className="btn flex-1 border border-oro/50 capitalize aria-pressed:bg-oro aria-pressed:text-carbon">{s}</button>)}</div></fieldset>
+            <div className="mt-2 flex gap-3">{(["comida", "cena"] as const).map(s => <button type="button" key={s} aria-pressed={service === s} onClick={() => setService(s)} className="btn chip flex-1 capitalize">{s}</button>)}</div></fieldset>
           <div><label htmlFor="party" className={lbl}>Comensales</label><input id="party" type="number" inputMode="numeric" min={restaurant.minParty} max={restaurant.maxParty} value={party} onChange={e => setParty(Number(e.target.value))} className={field} {...aria("party")} />{err("party")}</div>
           <button type="button" onClick={search} disabled={busy} className="btn btn-primary disabled:opacity-50">{busy ? "Consultando…" : "Ver disponibilidad"}</button>
         </div>
@@ -76,7 +76,7 @@ export default function ReservationForm() {
       {step === 2 && (
         <div className="grid gap-6">
           <h3 ref={head} tabIndex={-1} className="font-serif text-2xl">Elige la hora</h3>
-          <div role="radiogroup" aria-label="Hora" className="flex flex-wrap gap-2">{(slots ?? []).map(t => <button type="button" role="radio" aria-checked={time === t} key={t} onClick={() => setTime(t)} className="btn min-w-20 border border-oro/50 aria-checked:bg-oro aria-checked:text-carbon">{t}</button>)}</div>
+          <div role="radiogroup" aria-label="Hora" className="flex flex-wrap gap-2">{(slots ?? []).map(t => <button type="button" role="radio" aria-checked={time === t} key={t} onClick={() => setTime(t)} className="btn chip min-w-20">{t}</button>)}</div>
           {err("time")}
           <div className="flex gap-3"><button type="button" onClick={() => setStep(1)} className="btn btn-ghost">Atrás</button><button type="button" onClick={toDetails} className="btn btn-primary">Continuar</button></div>
         </div>
@@ -88,11 +88,11 @@ export default function ReservationForm() {
           <div><label htmlFor="phone" className={lbl}>Teléfono</label><input id="phone" type="tel" autoComplete="tel" value={data.phone} onChange={e => setData({ ...data, phone: e.target.value })} className={field} {...aria("phone")} />{err("phone")}</div>
           <div><label htmlFor="email" className={lbl}>Correo</label><input id="email" type="email" autoComplete="email" value={data.email} onChange={e => setData({ ...data, email: e.target.value })} className={field} {...aria("email")} />{err("email")}</div>
           <div><label htmlFor="notes" className={lbl}>Observaciones (opcional)</label><textarea id="notes" rows={2} maxLength={500} value={data.notes} onChange={e => setData({ ...data, notes: e.target.value })} className={field} /></div>
-          <p className="text-sm text-humo">Usaremos tus datos solo para gestionar esta reserva. [Pendiente: enlace a la política de privacidad del restaurante]</p>
+          <p className="mut text-sm">Usaremos tus datos solo para gestionar esta reserva. [Pendiente: enlace a la política de privacidad del restaurante]</p>
           <div className="flex gap-3"><button type="button" onClick={() => setStep(2)} className="btn btn-ghost">Atrás</button><button disabled={busy} className="btn btn-primary disabled:opacity-50">{busy ? "Enviando…" : "Confirmar reserva"}</button></div>
         </div>
       )}
-      {notice && <p role={notice.kind === "error" ? "alert" : "status"} className={`mt-6 border-l-2 pl-4 ${notice.kind === "error" ? "border-[#F29A86] text-[#F29A86]" : "border-oro text-marfil"}`}>{notice.text}{notice.kind === "info" && <> <a className="underline" href={restaurant.officialUrl} target="_blank" rel="noopener noreferrer">Web oficial</a>.</>}</p>}
+      {notice && <p role={notice.kind === "error" ? "alert" : "status"} className={`mt-6 border-l-2 pl-4 ${notice.kind === "error" ? "border-[color:var(--err)] text-[color:var(--err)]" : "border-[color:var(--acc)]"}`}>{notice.text}{notice.kind === "info" && <> <a className="link underline" href={restaurant.officialUrl} target="_blank" rel="noopener noreferrer">Web oficial</a>.</>}</p>}
     </form>
   );
 }
