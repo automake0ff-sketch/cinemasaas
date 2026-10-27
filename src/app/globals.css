@@ -1,3 +1,11 @@
 @tailwind base;@tailwind components;@tailwind utilities;
-body{background:#090B10;color:#F3EBDD}
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:root{color-scheme:dark}
+html{scroll-behavior:smooth;scroll-padding-top:5rem}
+body{background:#0B0908;color:#F2E9DA;line-height:1.65}
+:focus-visible{outline:2px solid #C9A45E;outline-offset:3px}
+::selection{background:#6E1E27;color:#F2E9DA}
+.perf{background-image:repeating-linear-gradient(90deg,#C9A45E 0 10px,transparent 10px 22px);height:6px;opacity:.55}
+.btn{display:inline-flex;min-height:48px;align-items:center;justify-content:center;padding:0 1.6rem;font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;transition:background .25s,color .25s,border-color .25s}
+.btn-primary{background:#C9A45E;color:#0B0908}.btn-primary:hover{background:#F2E9DA}
+.btn-ghost{border:1px solid #C9A45E;color:#C9A45E}.btn-ghost:hover{background:#C9A45E;color:#0B0908}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}

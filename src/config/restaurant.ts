@@ -1,3 +1,4 @@
+export const SITE = process.env.NEXT_PUBLIC_SITE_URL ?? "https://cinemasaas.vercel.app";
 // Datos comerciales centralizados. null = PENDIENTE de verificar con el negocio.
 export const restaurant = {
   name: "Cinema", city: "Dos Hermanas", timezone: "Europe/Madrid",
