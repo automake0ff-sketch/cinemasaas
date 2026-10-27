@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { Clapper, Frame } from "@/components/Icons";
 import MenuSection from "@/components/MenuSection";
+import { carta } from "@/config/carta";
+import { menuJsonLd } from "@/lib/menuJsonLd";
 import ReservationForm from "@/components/ReservationForm";
 import Slot from "@/components/Slot";
 import StickyReserve from "@/components/StickyReserve";
@@ -8,7 +10,7 @@ import Tour from "@/components/Tour";
 import { restaurant, SITE } from "@/config/restaurant";
 
 // Solo datos verificados: nombre, URL, localidad. Se amplía cuando haya dirección/teléfono/horarios reales.
-const jsonLd = { "@context": "https://schema.org", "@type": "Restaurant", name: "Restaurante Cinema", url: SITE, image: `${SITE}/tour/sala.jpg`, address: { "@type": "PostalAddress", addressLocality: "Dos Hermanas", addressRegion: "Sevilla", addressCountry: "ES" }, sameAs: [restaurant.officialUrl] };
+const jsonLd = { "@context": "https://schema.org", "@type": "Restaurant", name: "Restaurante Cinema", url: SITE, image: `${SITE}/tour/sala.jpg`, address: { "@type": "PostalAddress", addressLocality: "Dos Hermanas", addressRegion: "Sevilla", addressCountry: "ES" }, sameAs: [restaurant.officialUrl], ...(menuJsonLd(carta) && { hasMenu: menuJsonLd(carta) }) };
 const nav = [["La sala", "experiencia"], ["Carta", "carta"], ["Reservas", "reservas"], ["Contacto", "contacto"]];
 const eyebrow = "mut text-xs uppercase tracking-cine";
 const h2 = "display text-4xl leading-[1.05] md:text-6xl";
@@ -91,15 +93,17 @@ export default function Home() {
               <div className="md:col-span-5">
                 <p className={eyebrow}>Escena II</p>
                 <h2 className={`${h2} mt-3`}>La mesa</h2>
-                <p className="mut mt-6 max-w-sm text-lg">Platos, precios y alérgenos, solo cuando estén verificados por el restaurante.</p>
+                <p className="mut mt-6 max-w-sm text-lg">{carta.length ? "Elige una categoría y recorre la carta." : "Platos, precios y alérgenos, solo cuando estén verificados por el restaurante."}</p>
               </div>
-              <div className="grid grid-cols-3 gap-3 md:col-span-7 md:gap-5">
-                <Slot label="Plato 1" className="aspect-[4/5]" />
-                <Slot label="Plato 2" className="mt-8 aspect-[4/5]" />
-                <Slot label="Plato 3" className="aspect-[4/5]" />
-              </div>
+              {!carta.length && (
+                <div className="grid grid-cols-3 gap-3 md:col-span-7 md:gap-5">
+                  <Slot label="Plato 1" className="aspect-[4/5]" />
+                  <Slot label="Plato 2" className="mt-8 aspect-[4/5]" />
+                  <Slot label="Plato 3" className="aspect-[4/5]" />
+                </div>
+              )}
             </div>
-            <div className="mt-16 max-w-3xl md:ml-auto"><MenuSection /></div>
+            <div className={carta.length ? "mt-6" : "mt-16 max-w-3xl md:ml-auto"}><MenuSection /></div>
           </div>
         </section>
 
